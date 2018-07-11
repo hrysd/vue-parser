@@ -94,4 +94,10 @@ describe('Tests', function () {
     expect(parsed).to.be.equal('// tslint:disable\nimport Vue from \'vue\'\nexport default Vue\n')   
   })
 
+  it('should return import/export statements if imports external file', function() {
+    const contents = fs.readFileSync('./test/test-src-imports.vue', 'utf8')
+    const parsed = vueParser.parse(contents, 'script', { lang: 'ts' })
+
+    expect(parsed).to.be.equal('// tslint:disable\nimport script from \'./index.ts\'\nexport * from \'./index.ts\'')
+  })
 })
