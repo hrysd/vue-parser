@@ -19,6 +19,7 @@ export interface Options {
 export function parse (input: string, tag: string, options?: Options): string {
   const emptyExport = options && options.emptyExport !== undefined ? options.emptyExport : true
   const node = getNode(input, tag, options)
+  const src = getSrcAttribute(node)
   let parsed = padContent(node, input)
 
   // Add a default export of empty object if target tag script not found.
@@ -27,7 +28,14 @@ export function parse (input: string, tag: string, options?: Options): string {
     parsed = '// tslint:disable\nimport Vue from \'vue\'\nexport default Vue\n'
   }
 
-  return parsed
+  if (parsed && tag === 'script' && src) {
+    const splitted = parsed.split('\n')
+    splitted.pop()
+    splitted.push(`export { default } from '${src}'`)
+    parsed = splitted.join('\n')
+  }
+
+  return parsed;
 }
 
 /**
@@ -100,4 +108,16 @@ export function getNode (input: string, tag: string, options?: Options): Node {
 
 	  return tagFound && (langEmpty || langMatch)
   }) as Node
+}
+
+function getSrcAttribute(node: Node): string | undefined {
+  if (!node) return;
+
+  const attr = node.attrs.find((attr: {name: string; value: string}) => {
+    return attr.name === 'src'
+  })
+
+  if (attr) {
+    return attr.value.replace(/\.[^/.]+$/, '')
+  }
 }
