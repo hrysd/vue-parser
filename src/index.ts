@@ -115,6 +115,6 @@ function getSrcAttribute(node: Node): string | undefined {
   })
 
   if (attr) {
-    return attr.value
+    return attr.value.replace(/\.[^/.]+$/, '');
   }
 }
