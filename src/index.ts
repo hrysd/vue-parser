@@ -29,7 +29,7 @@ export function parse (input: string, tag: string, options?: Options): string {
   }
 
   if (parsed && src) {
-    return `// tslint:disable\nimport script from '${src}'\nexport * from '${src}'`;
+    return `// tslint:disable\nimport script from '${src}'\nexport default script`;
   } else {
     return parsed;
   }
